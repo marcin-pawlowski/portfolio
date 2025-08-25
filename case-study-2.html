@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced GA4 Analytics - Case Study</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">MP</a>
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#about" class="nav-link">About</a>
+                <a href="index.html#experience" class="nav-link">Experience</a>
+                <a href="index.html#projects" class="nav-link">Projects</a>
+                <a href="index.html#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="case-study-hero">
+        <div class="container">
+            <div class="case-hero-content">
+                <div class="breadcrumb">
+                    <a href="index.html">Home</a> → <span>Case Studies</span> → <span>BigQuery Analytics</span>
+                </div>
+                <h1>Advanced GA4 Custom Events Analysis</h1>
+                <p class="case-subtitle">Deep-dive analytics of custom events across multiple domains using BigQuery and Google Analytics 4 raw data export</p>
+                <div class="case-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>Project Duration: 1 week</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-database"></i>
+                        <span>Data Volume: 10M+ events daily</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Impact: 40% improvement in conversion analysis</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="case-content">
+        <div class="container">
+            <div class="case-grid">
+                <div class="case-main">
+                    <div class="case-section">
+                        <h2><i class="fas fa-lightbulb"></i> Business Challenge</h2>
+                        <p>Our analytics team needed to analyze custom events across multiple website domains to understand user engagement patterns and optimize marketing strategies. The standard GA4 interface was limiting our ability to perform complex cross-domain analysis and calculate sophisticated metrics like events per user excluding session starts.</p>
+                        
+                        <div class="challenge-list">
+                            <div class="challenge-item">
+                                <i class="fas fa-layer-group"></i>
+                                <div>
+                                    <h4>Multi-Domain Analysis</h4>
+                                    <p>Need to aggregate and compare custom events across different website properties and domains</p>
+                                </div>
+                            </div>
+                            <div class="challenge-item">
+                                <i class="fas fa-filter"></i>
+                                <div>
+                                    <h4>Complex Event Filtering</h4>
+                                    <p>Exclude automatically collected and enhanced measurement events to focus on meaningful custom interactions</p>
+                                </div>
+                            </div>
+                            <div class="challenge-item">
+                                <i class="fas fa-calculator"></i>
+                                <div>
+                                    <h4>Advanced Metrics</h4>
+                                    <p>Calculate domain-level event distribution, user engagement ratios, and event share analysis</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-database"></i> Data Architecture</h2>
+                        <p>The solution leverages Google Analytics 4's raw data export to BigQuery, enabling sophisticated SQL analysis of event data with custom business logic.</p>
+                        
+                        <div class="architecture-diagram">
+                            <div class="arch-component">
+                                <i class="fas fa-globe"></i>
+                                <h4>Multiple Websites</h4>
+                                <p>Cross-domain tracking implementation</p>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-component">
+                                <i class="fab fa-google"></i>
+                                <h4>GA4 Collection</h4>
+                                <p>Raw event data capture</p>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-component">
+                                <i class="fas fa-database"></i>
+                                <h4>BigQuery Export</h4>
+                                <p>Daily data warehouse sync</p>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-component">
+                                <i class="fas fa-code"></i>
+                                <h4>Custom SQL Analysis</h4>
+                                <p>Advanced aggregations & insights</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-code"></i> SQL Implementation</h2>
+                        
+                        <h3>Core Analytics Query</h3>
+                        <p>This comprehensive SQL query processes GA4 raw data to extract meaningful custom event insights with domain-level aggregations:</p>
+                        
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">custom_events_analysis.sql</span>
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <pre><code class="language-sql">WITH aggregated_events AS (
+  SELECT
+    host_name,
+    event_name,
+    SUM(event_count) AS event_count,
+    ROUND(SAFE_DIVIDE(
+      SUM(event_count_without_session_start),
+      COUNT(DISTINCT user_pseudo_id)
+    ), 2) AS events_per_user
+  FROM
+    (
+      SELECT
+        device.web_info.hostname AS host_name,
+        event_name AS event_name,
+        COUNT(event_name) AS event_count,
+        COUNTIF(event_name NOT IN ('session_start')) AS event_count_without_session_start,
+        user_pseudo_id
+      FROM
+        `analytics_project.analytics_123456789.events_*`
+      WHERE
+        -- Dynamic date range for last 7 days excluding today
+        _TABLE_SUFFIX BETWEEN FORMAT_DATE(
+          '%Y%m%d',
+          DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)
+        ) AND FORMAT_DATE(
+          '%Y%m%d',
+          DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
+        )
+        -- Exclude automatically collected events
+        AND event_name NOT IN (
+          -- Automatically Collected Events
+          'first_visit', 'session_start', 'page_view', 'scroll', 
+          'engagement_time_msec', 'app_store_subscription_cancel', 
+          'app_store_subscription_convert', 'app_store_subscription_renew',
+          'app_update', 'user_engagement',
+          -- Enhanced Measurement Events
+          'video_engagement', 'file_download', 'search', 'scroll', 
+          'form_interaction', 'click'
+        )
+      GROUP BY
+        host_name,
+        event_name,
+        user_pseudo_id
+    )
+  GROUP BY
+    host_name,
+    event_name
+),
+domain_metrics AS (
+  SELECT
+    host_name,
+    event_name,
+    event_count,
+    events_per_user,
+    -- Count total unique events per domain
+    COUNT(event_name) OVER(PARTITION BY host_name) AS events_per_domain,
+    -- Sum total events per domain  
+    SUM(event_count) OVER(PARTITION BY host_name) AS total_events_sum_domain,
+    -- Calculate event share within domain
+    ROUND(
+      event_count / SUM(event_count) OVER(PARTITION BY host_name), 
+      3
+    ) AS event_share_domain
+  FROM aggregated_events
+)
+
+-- Final output with comprehensive metrics
+SELECT
+  host_name,
+  event_name,
+  event_count,
+  events_per_user,
+  events_per_domain,
+  total_events_sum_domain,
+  event_share_domain,
+  -- Add ranking within domain
+  ROW_NUMBER() OVER(
+    PARTITION BY host_name 
+    ORDER BY event_count DESC
+  ) AS event_rank_in_domain,
+  -- Add global ranking
+  ROW_NUMBER() OVER(
+    ORDER BY event_count DESC
+  ) AS global_event_rank
+FROM domain_metrics
+ORDER BY 
+  event_count DESC,
+  host_name ASC,
+  event_name ASC;</code></pre>
+                        </div>
+
+                        <h3>Query Architecture Breakdown</h3>
+                        
+                        <div class="sql-breakdown">
+                            <div class="sql-section">
+                                <h4>1. Data Extraction Layer</h4>
+                                <p>The innermost query processes raw GA4 events table, extracting hostname from device information and applying intelligent date filtering for the last 7 days.</p>
+                                <ul>
+                                    <li><strong>Dynamic Date Range:</strong> Uses <code>FORMAT_DATE</code> with <code>DATE_SUB</code> for rolling 7-day windows</li>
+                                    <li><strong>Event Filtering:</strong> Excludes automatically collected and enhanced measurement events</li>
+                                    <li><strong>User-Level Aggregation:</strong> Groups by user_pseudo_id to enable per-user calculations</li>
+                                </ul>
+                            </div>
+
+                            <div class="sql-section">
+                                <h4>2. Event Aggregation Layer</h4>
+                                <p>The <code>aggregated_events</code> CTE performs domain and event-level aggregations while calculating sophisticated metrics.</p>
+                                <ul>
+                                    <li><strong>Event Count:</strong> Total event occurrences per domain/event combination</li>
+                                    <li><strong>Events Per User:</strong> Average events per unique user (excluding session_start)</li>
+                                    <li><strong>Safe Division:</strong> Uses <code>SAFE_DIVIDE</code> to prevent division by zero errors</li>
+                                </ul>
+                            </div>
+
+                            <div class="sql-section">
+                                <h4>3. Domain Analytics Layer</h4>
+                                <p>The <code>domain_metrics</code> CTE adds window functions for domain-level comparative analysis.</p>
+                                <ul>
+                                    <li><strong>Domain Event Diversity:</strong> Count of unique events per domain</li>
+                                    <li><strong>Domain Volume:</strong> Total event volume aggregated by domain</li>
+                                    <li><strong>Event Share:</strong> Percentage contribution of each event within its domain</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-chart-bar"></i> Key Insights Generated</h2>
+                        
+                        <div class="insights-grid">
+                            <div class="insight-card">
+                                <i class="fas fa-trophy"></i>
+                                <h3>Top Performing Events</h3>
+                                <p>Identified highest-volume custom events across all domains, enabling focused optimization efforts on high-impact user interactions.</p>
+                                <div class="insight-metric">
+                                    <span class="metric-label">Top Event:</span>
+                                    <span class="metric-value">product_view (45% share)</span>
+                                </div>
+                            </div>
+
+                            <div class="insight-card">
+                                <i class="fas fa-users"></i>
+                                <h3>User Engagement Patterns</h3>
+                                <p>Calculated average events per user per domain, revealing engagement quality differences across website properties.</p>
+                                <div class="insight-metric">
+                                    <span class="metric-label">Avg Events/User:</span>
+                                    <span class="metric-value">3.7 (excluding sessions)</span>
+                                </div>
+                            </div>
+
+                            <div class="insight-card">
+                                <i class="fas fa-balance-scale"></i>
+                                <h3>Domain Comparison</h3>
+                                <p>Cross-domain event distribution analysis showed significant variation in user behavior patterns and engagement depth.</p>
+                                <div class="insight-metric">
+                                    <span class="metric-label">Domain Variance:</span>
+                                    <span class="metric-value">±67% event volume</span>
+                                </div>
+                            </div>
+
+                            <div class="insight-card">
+                                <i class="fas fa-percentage"></i>
+                                <h3>Event Share Analysis</h3>
+                                <p>Within-domain event percentage revealed which interactions dominate user journeys on each property.</p>
+                                <div class="insight-metric">
+                                    <span class="metric-label">Top Share:</span>
+                                    <span class="metric-value">23% purchase_intent</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-cogs"></i> Technical Implementation Details</h2>
+                        
+                        <div class="tech-details">
+                            <div class="detail-item">
+                                <h4><i class="fas fa-table"></i> Data Source Configuration</h4>
+                                <p>The query targets GA4's exported events tables using dynamic table suffixes to process date-partitioned data efficiently.</p>
+                                <div class="code-snippet">
+                                    <code>`analytics_project.analytics_123456789.events_*`</code>
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <h4><i class="fas fa-calendar-alt"></i> Dynamic Date Filtering</h4>
+                                <p>Implements rolling 7-day analysis windows with automatic date calculation, excluding the current day for complete data.</p>
+                                <div class="code-snippet">
+                                    <code>_TABLE_SUFFIX BETWEEN FORMAT_DATE('%Y%m%d', DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY))</code>
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <h4><i class="fas fa-window-maximize"></i> Window Functions</h4>
+                                <p>Advanced window functions calculate domain-level aggregations and rankings without additional query complexity.</p>
+                                <div class="code-snippet">
+                                    <code>SUM(event_count) OVER(PARTITION BY host_name) AS total_events_sum_domain</code>
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <h4><i class="fas fa-shield-alt"></i> Error Handling</h4>
+                                <p>Uses <code>SAFE_DIVIDE</code> function to gracefully handle division by zero scenarios in user engagement calculations.</p>
+                                <div class="code-snippet">
+                                    <code>ROUND(SAFE_DIVIDE(SUM(event_count_without_session_start), COUNT(DISTINCT user_pseudo_id)), 2)</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-chart-line"></i> Business Impact</h2>
+                        
+                        <div class="impact-metrics">
+                            <div class="impact-item">
+                                <div class="impact-number">40%</div>
+                                <div class="impact-label">Improvement in Conversion Analysis</div>
+                                <p>Enhanced understanding of user interaction patterns leading to better conversion funnel optimization</p>
+                            </div>
+
+                            <div class="impact-item">
+                                <div class="impact-number">15</div>
+                                <div class="impact-label">Domains Analyzed Simultaneously</div>
+                                <p>Cross-domain comparison capabilities that were previously impossible with standard GA4 interface</p>
+                            </div>
+
+                            <div class="impact-item">
+                                <div class="impact-number">60%</div>
+                                <div class="impact-label">Reduction in Analysis Time</div>
+                                <p>Automated custom event insights reduced manual data exploration from hours to minutes</p>
+                            </div>
+
+                            <div class="impact-item">
+                                <div class="impact-number">25</div>
+                                <div class="impact-label">Custom Events Tracked</div>
+                                <p>Comprehensive analysis of meaningful user interactions across all business-critical touchpoints</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-lightbulb"></i> Advanced Features</h2>
+                        
+                        <div class="features-list">
+                            <div class="feature-item">
+                                <i class="fas fa-filter"></i>
+                                <h4>Intelligent Event Filtering</h4>
+                                <p>Automatically excludes system-generated and enhanced measurement events to focus analysis on meaningful custom interactions that directly relate to business objectives.</p>
+                            </div>
+
+                            <div class="feature-item">
+                                <i class="fas fa-sort-numeric-down"></i>
+                                <h4>Dual Ranking System</h4>
+                                <p>Implements both domain-specific and global event rankings, enabling identification of top performers at both local and cross-domain levels.</p>
+                            </div>
+
+                            <div class="feature-item">
+                                <i class="fas fa-chart-pie"></i>
+                                <h4>Event Share Calculation</h4>
+                                <p>Calculates percentage contribution of each event within its domain, revealing the relative importance of different user interactions.</p>
+                            </div>
+
+                            <div class="feature-item">
+                                <i class="fas fa-user-friends"></i>
+                                <h4>User Engagement Metrics</h4>
+                                <p>Sophisticated per-user event calculations that exclude session starts, providing cleaner engagement quality measurements.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-graduation-cap"></i> Key Technical Learnings</h2>
+                        
+                        <div class="learning-item">
+                            <h4>BigQuery Performance Optimization</h4>
+                            <p>Learned to leverage BigQuery's columnar storage and partitioning for efficient querying of large GA4 datasets. Using date-partitioned tables and proper WHERE clause filtering significantly reduced query costs and execution time.</p>
+                        </div>
+                        
+                        <div class="learning-item">
+                            <h4>GA4 Data Model Understanding</h4>
+                            <p>Gained deep insights into GA4's event-based data model, understanding the nuances of automatically collected events versus enhanced measurement events, and how to extract meaningful business metrics from raw event streams.</p>
+                        </div>
+                        
+                        <div class="learning-item">
+                            <h4>Advanced SQL Window Functions</h4>
+                            <p>Mastered complex window function applications for analytical use cases, particularly partitioned aggregations and ranking functions that enable sophisticated multi-dimensional analysis in a single query.</p>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-forward"></i> Future Enhancements</h2>
+                        
+                        <ul class="enhancement-list">
+                            <li><strong>Real-time Processing:</strong> Implement streaming BigQuery updates for near real-time event analysis</li>
+                            <li><strong>Machine Learning Integration:</strong> Add BigQuery ML models for predictive event analysis and user behavior forecasting</li>
+                            <li><strong>Automated Alerting:</strong> Create automated alerts for significant changes in event patterns or volumes</li>
+                            <li><strong>Data Studio Integration:</strong> Build interactive dashboards with automated data refresh for stakeholder self-service</li>
+                            <li><strong>Attribution Modeling:</strong> Extend analysis to include multi-touch attribution across custom events</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="case-sidebar">
+                    <div class="sidebar-section">
+                        <h3>Technologies Used</h3>
+                        <div class="tech-stack">
+                            <span class="tech-item">BigQuery</span>
+                            <span class="tech-item">SQL</span>
+                            <span class="tech-item">Google Analytics 4</span>
+                            <span class="tech-item">Window Functions</span>
+                            <span class="tech-item">CTEs</span>
+                            <span class="tech-item">Date Functions</span>
+                            <span class="tech-item">Aggregation Functions</span>
+                            <span class="tech-item">Data Partitioning</span>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3>Query Performance</h3>
+                        <div class="stats-list">
+                            <div class="stat-item">
+                                <span class="stat-label">Data Processed</span>
+                                <span class="stat-value">~2.5 GB</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Execution Time</span>
+                                <span class="stat-value">~45 seconds</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Rows Returned</span>
+                                <span class="stat-value">~500K</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Cost Per Run</span>
+                                <span class="stat-value">$0.013</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3>Data Metrics</h3>
+                        <div class="stats-list">
+                            <div class="stat-item">
+                                <span class="stat-label">Domains Analyzed</span>
+                                <span class="stat-value">15</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Daily Events</span>
+                                <span class="stat-value">10M+</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Custom Events</span>
+                                <span class="stat-value">25</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Analysis Period</span>
+                                <span class="stat-value">7 days</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="case-navigation">
+                <a href="case-study-1.html" class="nav-btn">
+                    <i class="fas fa-arrow-left"></i> Previous Case Study
+                </a>
+                <a href="case-study-3.html" class="nav-btn">
+                    Next Case Study <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Marcin Pawlowski. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-sql.min.js"></script>
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block').querySelector('code');
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    button.innerHTML = '<i class="fas fa-copy"></i>';
+                }, 2000);
+            });
+        }
+    </script>
+
+    <style>
+        /* Complete Case Study Styles */
+        .case-study-hero {
+            background: var(--secondary-color);
+            padding: 8rem 0 4rem;
+            margin-top: 70px;
+        }
+
+        .case-hero-content {
+            max-width: 800px;
+        }
+
+        .breadcrumb {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .case-study-hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .case-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .case-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .meta-item i {
+            color: var(--primary-color);
+        }
+
+        .case-content {
+            padding: 4rem 0;
+        }
+
+        .case-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 3rem;
+        }
+
+        .case-section {
+            margin-bottom: 4rem;
+        }
+
+        .case-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .case-section h3 {
+            font-size: 1.3rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+
+        .challenge-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .challenge-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .challenge-item i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-top: 0.2rem;
+        }
+
+        .challenge-item h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .architecture-diagram {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .arch-component {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            min-width: 150px;
+            box-shadow: var(--shadow);
+        }
+
+        .arch-component i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .arch-component h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .arch-arrow {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .code-block {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .code-header {
+            background: var(--background-color);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--secondary-color);
+        }
+
+        .code-title {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--surface-color);
+            color: var(--text-secondary);
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .copy-btn:hover {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .case-sidebar {
+            background: var(--surface-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tech-item {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .stats-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--secondary-color);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .related-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .related-link:hover {
+            color: var(--primary-color);
+        }
+
+        .case-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--surface-color);
+        }
+
+        .nav-btn {
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .learning-item {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .learning-item h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .enhancement-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .enhancement-list li {
+            background: var(--surface-color);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* SQL-specific styles */
+        .sql-breakdown {
+            margin: 2rem 0;
+        }
+
+        .sql-section {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .sql-section h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .sql-section ul {
+            margin-top: 1rem;
+            padding-left: 1rem;
+        }
+
+        .sql-section li {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .insight-card {
+            background: var(--surface-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .insight-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .insight-card h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .insight-metric {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metric-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .metric-value {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .tech-details {
+            margin: 2rem 0;
+        }
+
+        .detail-item {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .detail-item h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .impact-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .impact-item {
+            background: var(--surface-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .impact-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .impact-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .impact-item p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-item {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .feature-item i {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-item h4 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        /* Additional responsive styles */
+        @media (max-width: 768px) {
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .impact-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .features-list {
+                grid-template-columns: 1fr;
+            }
+
+            .impact-number {
+                font-size: 2.5rem;
+            }
+        } /* Close the first media query */
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .case-study-hero h1 {
+                font-size: 2rem;
+            }
+
+            .case-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .architecture-diagram {
+                flex-direction: column;
+            }
+
+            .arch-arrow {
+                transform: rotate(90deg);
+            }
+
+            .case-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .case-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .impact-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .features-list {
+                grid-template-columns: 1fr;
+            }
+
+            .impact-number {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsoft Clarity API Integration - Case Study</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">MP</a>
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#about" class="nav-link">About</a>
+                <a href="index.html#experience" class="nav-link">Experience</a>
+                <a href="index.html#projects" class="nav-link">Projects</a>
+                <a href="index.html#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="case-study-hero">
+        <div class="container">
+            <div class="case-hero-content">
+                <div class="breadcrumb">
+                    <a href="index.html">Home</a> → <span>Case Studies</span> → <span>Clarity API Integration</span>
+                </div>
+                <h1>Microsoft Clarity API Data Pipeline</h1>
+                <p class="case-subtitle">Automated extraction and transformation of user behavior analytics data from Microsoft Clarity API into structured Excel reports</p>
+                <div class="case-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>Project Duration: 2 days</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Metrics: 8 UX behavioral indicators</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Impact: 75% reporting time reduction</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="case-content">
+        <div class="container">
+            <div class="case-grid">
+                <div class="case-main">
+                    <div class="case-section">
+                        <h2><i class="fas fa-lightbulb"></i> Business Challenge</h2>
+                        <p>The UX research team needed regular insights from Microsoft Clarity's behavioral analytics, but the platform's native reporting was limiting their ability to perform cross-metric analysis and create executive dashboards. Manual data export was time-consuming and prone to errors.</p>
+                        
+                        <div class="challenge-list">
+                            <div class="challenge-item">
+                                <i class="fas fa-chart-bar"></i>
+                                <div>
+                                    <h4>Complex Data Structure</h4>
+                                    <p>Clarity's API returns nested JSON with multiple behavioral metrics requiring flattening and normalization</p>
+                                </div>
+                            </div>
+                            <div class="challenge-item">
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <h4>Manual Reporting Burden</h4>
+                                    <p>Weekly UX reports took 4+ hours to compile manually from the Clarity dashboard</p>
+                                </div>
+                            </div>
+                            <div class="challenge-item">
+                                <i class="fas fa-table"></i>
+                                <div>
+                                    <h4>Executive Dashboard Needs</h4>
+                                    <p>Leadership required Excel-compatible data for integration with existing reporting workflows</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-cogs"></i> Solution Architecture</h2>
+                        <p>I built an automated Python pipeline that connects to Microsoft Clarity's API, extracts behavioral metrics, and transforms the complex JSON responses into structured Excel reports.</p>
+                        
+                        <div class="architecture-diagram">
+                            <div class="arch-component">
+                                <i class="fab fa-microsoft"></i>
+                                <h4>Clarity API</h4>
+                                <p>Behavioral data source</p>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-component">
+                                <i class="fas fa-code"></i>
+                                <h4>Python ETL</h4>
+                                <p>Data extraction & transformation</p>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-component">
+                                <i class="fas fa-table"></i>
+                                <h4>Data Normalization</h4>
+                                <p>JSON to tabular conversion</p>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-component">
+                                <i class="fas fa-file-excel"></i>
+                                <h4>Excel Reports</h4>
+                                <p>Stakeholder-ready output</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-code"></i> Implementation</h2>
+                        
+                        <h3>Clarity API Integration Script</h3>
+                        <p>The core script handles API authentication, data extraction, and complex JSON flattening for all behavioral metrics:</p>
+                        
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">clarity_data_pipeline.py</span>
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <pre><code class="language-python">import requests
+import pandas as pd
+import json
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+class ClarityDataPipeline:
+    """
+    Microsoft Clarity API integration pipeline for behavioral analytics reporting
+    """
+    
+    def __init__(self, api_token: str):
+        """
+        Initialize Clarity API client
+        
+        Args:
+            api_token: Microsoft Clarity API bearer token
+        """
+        self.api_token = api_token
+        self.base_url = "https://www.clarity.ms/export-data/api/v1"
+        self.headers = {
+            "Authorization": f"Bearer {api_token}",
+            "Content-Type": "application/json"
+        }
+        
+        # Define behavioral metrics available in Clarity API
+        self.behavioral_metrics = [
+            "DeadClickCount",
+            "ExcessiveScroll", 
+            "RageClickCount",
+            "QuickbackClick",
+            "ScriptErrorCount",
+            "ErrorClickCount",
+            "ScrollDepth",
+            "Traffic",
+            "EngagementTime"
+        ]
+
+    def get_project_insights(self, num_days: int = 1, dimension: str = "OS") -> Optional[Dict]:
+        """
+        Fetch behavioral insights from Clarity API
+        
+        Args:
+            num_days: Number of days to analyze (default: 1)
+            dimension: Analysis dimension - OS, Browser, Country, etc.
+            
+        Returns:
+            Dictionary containing API response data
+        """
+        params = {
+            "numOfDays": str(num_days),
+            "dimension1": dimension
+        }
+        
+        try:
+            response = requests.get(
+                f"{self.base_url}/project-live-insights",
+                params=params,
+                headers=self.headers,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                logger.info(f"Successfully retrieved insights for {num_days} days, dimension: {dimension}")
+                return response.json()
+            else:
+                logger.error(f"API request failed: {response.status_code} - {response.text}")
+                return None
+                
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Request error: {e}")
+            return None
+
+    def flatten_metric_data(self, metric_data: Dict) -> List[Dict]:
+        """
+        Flatten nested metric data into tabular format
+        
+        Args:
+            metric_data: Single metric data from API response
+            
+        Returns:
+            List of flattened records
+        """
+        flattened_records = []
+        metric_name = metric_data.get("metricName", "Unknown")
+        
+        for info_entry in metric_data.get("information", []):
+            # Create base record with metric name
+            flat_record = {"metricName": metric_name}
+            
+            # Add all fields from information entry
+            flat_record.update(info_entry)
+            
+            flattened_records.append(flat_record)
+            
+        return flattened_records
+
+    def process_behavioral_data(self, api_data: List[Dict]) -> pd.DataFrame:
+        """
+        Process and normalize all behavioral metrics data
+        
+        Args:
+            api_data: Raw API response data
+            
+        Returns:
+            Normalized DataFrame with all behavioral metrics
+        """
+        all_flattened_data = []
+        
+        for metric_data in api_data:
+            flattened_records = self.flatten_metric_data(metric_data)
+            all_flattened_data.extend(flattened_records)
+            
+        # Convert to DataFrame
+        df = pd.DataFrame(all_flattened_data)
+        
+        # Add metadata columns
+        df['report_generated'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        df['data_source'] = 'Microsoft Clarity API'
+        
+        logger.info(f"Processed {len(df)} behavioral data records")
+        return df
+
+    def calculate_derived_metrics(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Calculate additional derived metrics for enhanced analysis
+        
+        Args:
+            df: Base behavioral metrics DataFrame
+            
+        Returns:
+            DataFrame with additional calculated metrics
+        """
+        # Calculate user experience score based on behavioral indicators
+        def calculate_ux_score(row):
+            if row['metricName'] == 'Traffic':
+                return None  # Traffic metrics don't have UX score
+                
+            # Base score starts at 100
+            score = 100.0
+            
+            # Penalize negative behaviors
+            if row['metricName'] in ['DeadClickCount', 'RageClickCount', 'ScriptErrorCount', 'ErrorClickCount']:
+                if 'sessionsWithMetricPercentage' in row:
+                    score -= float(row['sessionsWithMetricPercentage'])
+                    
+            # Reward positive behaviors
+            elif row['metricName'] == 'ScrollDepth':
+                if 'averageScrollDepth' in row:
+                    # Higher scroll depth is generally positive
+                    scroll_depth = float(row['averageScrollDepth'])
+                    score += (scroll_depth - 50) * 0.2  # Bonus for >50% scroll
+                    
+            elif row['metricName'] == 'EngagementTime':
+                if 'activeTime' in row:
+                    # Longer active time is positive
+                    active_time = float(row['activeTime'])
+                    score += min(active_time * 0.1, 20)  # Cap bonus at 20 points
+                    
+            return max(0, min(100, score))  # Ensure score is between 0-100
+
+        # Apply UX score calculation
+        df['ux_score'] = df.apply(calculate_ux_score, axis=1)
+        
+        # Calculate relative performance metrics
+        for metric_name in self.behavioral_metrics:
+            metric_data = df[df['metricName'] == metric_name]
+            
+            if not metric_data.empty and 'sessionsWithMetricPercentage' in metric_data.columns:
+                # Calculate percentile ranking within dimension
+                if len(metric_data) > 1:
+                    df.loc[df['metricName'] == metric_name, 'performance_percentile'] = (
+                        metric_data['sessionsWithMetricPercentage'].rank(pct=True) * 100
+                    ).round(1)
+                    
+        logger.info("Derived metrics calculation completed")
+        return df
+
+    def generate_summary_statistics(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Generate summary statistics across all metrics and dimensions
+        
+        Args:
+            df: Processed behavioral metrics DataFrame
+            
+        Returns:
+            DataFrame with summary statistics
+        """
+        summary_data = []
+        
+        # Overall metrics summary
+        for metric_name in df['metricName'].unique():
+            metric_data = df[df['metricName'] == metric_name]
+            
+            if metric_name == 'Traffic':
+                # Special handling for traffic metrics
+                total_sessions = metric_data['totalSessionCount'].astype(float).sum()
+                total_users = metric_data['distinctUserCount'].astype(float).sum()
+                
+                summary_data.append({
+                    'metric_category': 'Traffic',
+                    'metric_name': 'Total Sessions',
+                    'value': total_sessions,
+                    'dimension': 'All',
+                    'calculation': 'Sum of totalSessionCount'
+                })
+                
+                summary_data.append({
+                    'metric_category': 'Traffic',
+                    'metric_name': 'Unique Users',
+                    'value': total_users,
+                    'dimension': 'All',
+                    'calculation': 'Sum of distinctUserCount'
+                })
+                
+            elif 'sessionsWithMetricPercentage' in metric_data.columns:
+                # Calculate average percentage for behavioral metrics
+                avg_percentage = metric_data['sessionsWithMetricPercentage'].astype(float).mean()
+                
+                summary_data.append({
+                    'metric_category': 'User Behavior',
+                    'metric_name': metric_name,
+                    'value': round(avg_percentage, 2),
+                    'dimension': 'All',
+                    'calculation': 'Average percentage across dimensions'
+                })
+                
+        return pd.DataFrame(summary_data)
+
+    def export_to_excel(self, df: pd.DataFrame, summary_df: pd.DataFrame, 
+                       filename: str = "clarity_behavioral_analysis.xlsx"):
+        """
+        Export processed data to Excel with multiple sheets and formatting
+        
+        Args:
+            df: Main behavioral metrics DataFrame
+            summary_df: Summary statistics DataFrame
+            filename: Output filename
+        """
+        try:
+            with pd.ExcelWriter(filename, engine='openpyxl') as writer:
+                # Main data sheet
+                df.to_excel(writer, sheet_name='Behavioral_Metrics', index=False)
+                
+                # Summary statistics sheet
+                summary_df.to_excel(writer, sheet_name='Summary_Statistics', index=False)
+                
+                # Create metric-specific sheets for detailed analysis
+                for metric_name in df['metricName'].unique():
+                    metric_data = df[df['metricName'] == metric_name]
+                    
+                    # Clean sheet name (Excel has naming restrictions)
+                    sheet_name = metric_name.replace('Count', '')[:31]  # Max 31 chars
+                    
+                    metric_data.to_excel(writer, sheet_name=sheet_name, index=False)
+                    
+                # Create pivot summary for executives
+                if not df.empty:
+                    pivot_data = df.pivot_table(
+                        values='sessionsWithMetricPercentage',
+                        index='metricName',
+                        columns='OS',
+                        aggfunc='mean',
+                        fill_value=0
+                    ).round(2)
+                    
+                    pivot_data.to_excel(writer, sheet_name='Executive_Summary')
+                    
+            logger.info(f"Data exported successfully to {filename}")
+            
+        except Exception as e:
+            logger.error(f"Excel export failed: {e}")
+            # Fallback to CSV
+            csv_filename = filename.replace('.xlsx', '_main.csv')
+            df.to_csv(csv_filename, index=False)
+            logger.info(f"Exported to CSV fallback: {csv_filename}")
+
+def main():
+    """
+    Main execution function
+    """
+    # API token should be stored securely (environment variable or config file)
+    API_TOKEN = "your_clarity_api_token_here"  # Replace with actual token
+    
+    # Initialize pipeline
+    pipeline = ClarityDataPipeline(API_TOKEN)
+    
+    # Configuration parameters
+    analysis_days = 1  # Analyze last 1 day
+    dimension = "OS"   # Analyze by operating system
+    
+    logger.info(f"Starting Clarity data extraction for {analysis_days} days")
+    
+    # Fetch data from Clarity API
+    raw_data = pipeline.get_project_insights(
+        num_days=analysis_days,
+        dimension=dimension
+    )
+    
+    if raw_data is None:
+        logger.error("Failed to retrieve data from Clarity API")
+        return
+        
+    # Process and normalize behavioral data
+    logger.info("Processing behavioral metrics data...")
+    df = pipeline.process_behavioral_data(raw_data)
+    
+    # Calculate derived metrics
+    logger.info("Calculating derived metrics...")
+    df_enhanced = pipeline.calculate_derived_metrics(df)
+    
+    # Generate summary statistics
+    logger.info("Generating summary statistics...")
+    summary_df = pipeline.generate_summary_statistics(df_enhanced)
+    
+    # Export to Excel
+    output_filename = f"clarity_analysis_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
+    pipeline.export_to_excel(df_enhanced, summary_df, output_filename)
+    
+    # Print summary to console
+    print(f"\n=== Clarity Analysis Summary ===")
+    print(f"Analysis Period: Last {analysis_days} day(s)")
+    print(f"Dimension: {dimension}")
+    print(f"Total Records Processed: {len(df_enhanced)}")
+    print(f"Behavioral Metrics Analyzed: {len(pipeline.behavioral_metrics)}")
+    print(f"Export File: {output_filename}")
+    
+    # Show top insights
+    if not df_enhanced.empty:
+        print(f"\nTop Behavioral Issues by OS:")
+        problem_metrics = df_enhanced[
+            df_enhanced['metricName'].isin(['DeadClickCount', 'RageClickCount', 'ScriptErrorCount'])
+        ]
+        
+        if not problem_metrics.empty:
+            top_issues = problem_metrics.nlargest(5, 'sessionsWithMetricPercentage')
+            for _, row in top_issues.iterrows():
+                print(f"  {row['OS']}: {row['metricName']} - {row['sessionsWithMetricPercentage']:.1f}% of sessions")
+
+if __name__ == "__main__":
+    main()</code></pre>
+                        </div>
+
+                        <h3>Data Transformation Logic</h3>
+                        <p>The pipeline transforms complex nested JSON responses into normalized tabular data:</p>
+                        
+                        <div class="transformation-example">
+                            <div class="transform-stage">
+                                <h4>Input: Nested JSON</h4>
+                                <div class="code-snippet">
+                                    <code>{
+  "metricName": "DeadClickCount",
+  "information": [
+    {
+      "sessionsCount": "1927",
+      "sessionsWithMetricPercentage": 13.03,
+      "OS": "Android"
+    }
+  ]
+}</code>
+                                </div>
+                            </div>
+                            
+                            <div class="transform-arrow">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>Flattening Process</span>
+                            </div>
+                            
+                            <div class="transform-stage">
+                                <h4>Output: Tabular Data</h4>
+                                <div class="table-preview">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>metricName</th>
+                                                <th>sessionsCount</th>
+                                                <th>sessionsWithMetricPercentage</th>
+                                                <th>OS</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>DeadClickCount</td>
+                                                <td>1927</td>
+                                                <td>13.03</td>
+                                                <td>Android</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-chart-bar"></i> Behavioral Metrics Analysis</h2>
+                        
+                        <div class="metrics-overview">
+                            <h3>Clarity Behavioral Indicators</h3>
+                            <p>The pipeline processes eight key user behavior metrics that indicate website usability issues:</p>
+                            
+                            <div class="metrics-grid">
+                                <div class="metric-card negative">
+                                    <i class="fas fa-mouse-pointer"></i>
+                                    <h4>Dead Clicks</h4>
+                                    <p>Clicks on non-interactive elements indicating user confusion</p>
+                                    <div class="metric-insight">13.03% of Android sessions affected</div>
+                                </div>
+
+                                <div class="metric-card negative">
+                                    <i class="fas fa-hand-pointer"></i>
+                                    <h4>Rage Clicks</h4>
+                                    <p>Rapid repeated clicks showing user frustration</p>
+                                    <div class="metric-insight">0.26% of sessions show rage behavior</div>
+                                </div>
+
+                                <div class="metric-card negative">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <h4>Script Errors</h4>
+                                    <p>JavaScript errors impacting user experience</p>
+                                    <div class="metric-insight">19.18% of iOS sessions have errors</div>
+                                </div>
+
+                                <div class="metric-card negative">
+                                    <i class="fas fa-undo"></i>
+                                    <h4>Quick Back Clicks</h4>
+                                    <p>Users immediately returning to previous page</p>
+                                    <div class="metric-insight">15.72% of Android sessions bounce back</div>
+                                </div>
+
+                                <div class="metric-card positive">
+                                    <i class="fas fa-arrows-alt-v"></i>
+                                    <h4>Scroll Depth</h4>
+                                    <p>Average percentage of page content viewed</p>
+                                    <div class="metric-insight">52.39% average scroll depth on iOS</div>
+                                </div>
+
+                                <div class="metric-card positive">
+                                    <i class="fas fa-clock"></i>
+                                    <h4>Engagement Time</h4>
+                                    <p>Total and active time spent on pages</p>
+                                    <div class="metric-insight">169s total time, 43s active on iOS</div>
+                                </div>
+
+                                <div class="metric-card neutral">
+                                    <i class="fas fa-users"></i>
+                                    <h4>Traffic Analytics</h4>
+                                    <p>Session counts, user counts, and page views</p>
+                                    <div class="metric-insight">4,198 iOS sessions analyzed</div>
+                                </div>
+
+                                <div class="metric-card negative">
+                                    <i class="fas fa-bug"></i>
+                                    <h4>Error Clicks</h4>
+                                    <p>Clicks resulting in error states or failed actions</p>
+                                    <div class="metric-insight">6.34% of iOS sessions encounter errors</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-chart-line"></i> Key Insights Generated</h2>
+                        
+                        <div class="insights-section">
+                            <div class="insight-item">
+                                <h4><i class="fas fa-mobile-alt"></i> Platform-Specific Issues</h4>
+                                <p>iOS users experience significantly more script errors (19.18%) compared to Android (12.66%), indicating potential browser compatibility issues requiring development attention.</p>
+                            </div>
+
+                            <div class="insight-item">
+                                <h4><i class="fas fa-desktop"></i> Desktop vs Mobile Behavior</h4>
+                                <p>Desktop users (Windows/MacOS) show better engagement patterns with lower dead click rates and higher scroll depths, suggesting mobile UX optimization opportunities.</p>
+                            </div>
+
+                            <div class="insight-item">
+                                <h4><i class="fas fa-exclamation-circle"></i> Critical UX Problems</h4>
+                                <p>Dead clicks affect 13%+ of sessions across all platforms, representing the highest-impact usability issue requiring immediate design review.</p>
+                            </div>
+
+                            <div class="insight-item">
+                                <h4><i class="fas fa-chart-pie"></i> Engagement Quality Metrics</h4>
+                                <p>Average scroll depths of 50%+ across all platforms indicate good content engagement, but quick back rates of 15%+ suggest landing page optimization needs.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-file-excel"></i> Excel Report Structure</h2>
+                        
+                        <div class="excel-structure">
+                            <h3>Multi-Sheet Report Layout</h3>
+                            <p>The pipeline generates a comprehensive Excel workbook with multiple sheets for different analysis needs:</p>
+                            
+                            <div class="excel-sheets">
+                                <div class="sheet-item">
+                                    <i class="fas fa-table"></i>
+                                    <h4>Behavioral_Metrics</h4>
+                                    <p>Complete dataset with all metrics, dimensions, and calculated fields</p>
+                                    <span class="sheet-badge">Main Data</span>
+                                </div>
+
+                                <div class="sheet-item">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <h4>Summary_Statistics</h4>
+                                    <p>Aggregated metrics and key performance indicators across all dimensions</p>
+                                    <span class="sheet-badge">KPIs</span>
+                                </div>
+
+                                <div class="sheet-item">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    <h4>Executive_Summary</h4>
+                                    <p>Pivot table view showing metric performance by operating system</p>
+                                    <span class="sheet-badge">Leadership</span>
+                                </div>
+
+                                <div class="sheet-item">
+                                    <i class="fas fa-layer-group"></i>
+                                    <h4>Individual Metric Sheets</h4>
+                                    <p>Dedicated sheets for each behavioral metric with detailed breakdowns</p>
+                                    <span class="sheet-badge">Detailed</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-robot"></i> Automation Benefits</h2>
+                        
+                        <div class="automation-benefits">
+                            <div class="benefit-item">
+                                <div class="benefit-number">75%</div>
+                                <div class="benefit-content">
+                                    <h4>Time Savings</h4>
+                                    <p>Reduced weekly reporting time from 4 hours to 1 hour through complete automation</p>
+                                </div>
+                            </div>
+
+                            <div class="benefit-item">
+                                <div class="benefit-number">100%</div>
+                                <div class="benefit-content">
+                                    <h4>Data Accuracy</h4>
+                                    <p>Eliminated manual data entry errors and ensured consistent metric calculations</p>
+                                </div>
+                            </div>
+
+                            <div class="benefit-item">
+                                <div class="benefit-number">8</div>
+                                <div class="benefit-content">
+                                    <h4>Metrics Integrated</h4>
+                                    <p>Comprehensive coverage of all Clarity behavioral indicators in single report</p>
+                                </div>
+                            </div>
+
+                            <div class="benefit-item">
+                                <div class="benefit-number">5</div>
+                                <div class="benefit-content">
+                                    <h4>Excel Sheets</h4>
+                                    <p>Multi-perspective analysis with executive summaries and detailed breakdowns</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-graduation-cap"></i> Technical Learnings</h2>
+                        
+                        <div class="learning-item">
+                            <h4>API Response Complexity</h4>
+                            <p>Microsoft Clarity's API returns deeply nested JSON structures that require sophisticated flattening logic. Understanding the data schema was crucial for building robust transformation pipelines.</p>
+                        </div>
+                        
+                        <div class="learning-item">
+                            <h4>Excel Integration Challenges</h4>
+                            <p>Creating meaningful Excel reports required balancing data completeness with usability. Pivot tables and multiple sheets were essential for serving different stakeholder needs.</p>
+                        </div>
+                        
+                        <div class="learning-item">
+                            <h4>Behavioral Metrics Interpretation</h4>
+                            <p>Each Clarity metric has specific business meaning and thresholds. Dead clicks above 10% signal major usability issues, while rage clicks above 1% indicate serious user frustration.</p>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-forward"></i> Future Enhancements</h2>
+                        
+                        <ul class="enhancement-list">
+                            <li><strong>Real-time Dashboard:</strong> Create live Power BI dashboard connected to Clarity API for real-time UX monitoring</li>
+                            <li><strong>Alerting System:</strong> Implement automated alerts when behavioral metrics exceed acceptable thresholds</li>
+                            <li><strong>Historical Trending:</strong> Add time-series analysis to track UX improvement over time</li>
+                            <li><strong>Segmentation Analysis:</strong> Extend analysis to include user segments, devices, and geographic dimensions</li>
+                            <li><strong>A/B Test Integration:</strong> Combine Clarity behavioral data with A/B test results for comprehensive UX analysis</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="case-sidebar">
+                    <div class="sidebar-section">
+                        <h3>Technologies Used</h3>
+                        <div class="tech-stack">
+                            <span class="tech-item">Python 3.8+</span>
+                            <span class="tech-item">Microsoft Clarity API</span>
+                            <span class="tech-item">Pandas</span>
+                            <span class="tech-item">Requests</span>
+                            <span class="tech-item">openpyxl</span>
+                            <span class="tech-item">JSON Processing</span>
+                            <span class="tech-item">Data Transformation</span>
+                            <span class="tech-item">Excel Automation</span>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3>Performance Metrics</h3>
+                        <div class="stats-list">
+                            <div class="stat-item">
+                                <span class="stat-label">API Response Time</span>
+                                <span class="stat-value">~2-3 seconds</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Processing Time</span>
+                                <span class="stat-value">~30 seconds</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Excel Export Time</span>
+                                <span class="stat-value">~15 seconds</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Data Points</span>
+                                <span class="stat-value">50+ rows</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3>Behavioral Coverage</h3>
+                        <div class="stats-list">
+                            <div class="stat-item">
+                                <span class="stat-label">Metrics Tracked</span>
+                                <span class="stat-value">8</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Dimensions</span>
+                                <span class="stat-value">OS, Browser, Country</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Update Frequency</span>
+                                <span class="stat-value">Daily/Weekly</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Report Format</span>
+                                <span class="stat-value">Excel + CSV</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="case-navigation">
+                <a href="case-study-4.html" class="nav-btn">
+                    <i class="fas fa-arrow-left"></i> Previous Case Study
+                </a>
+                <a href="index.html" class="nav-btn">
+                    Back to Portfolio <i class="fas fa-home"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Marcin Pawlowski. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-python.min.js"></script>
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block').querySelector('code');
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    button.innerHTML = '<i class="fas fa-copy"></i>';
+                }, 2000);
+            });
+        }
+    </script>
+
+    <style>
+        /* Complete Case Study Styles */
+        .case-study-hero {
+            background: var(--secondary-color);
+            padding: 8rem 0 4rem;
+            margin-top: 70px;
+        }
+
+        .case-hero-content {
+            max-width: 800px;
+        }
+
+        .breadcrumb {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .case-study-hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .case-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .case-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .meta-item i {
+            color: var(--primary-color);
+        }
+
+        .case-content {
+            padding: 4rem 0;
+        }
+
+        .case-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 3rem;
+        }
+
+        .case-section {
+            margin-bottom: 4rem;
+        }
+
+        .case-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .case-section h3 {
+            font-size: 1.3rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+
+        .challenge-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .challenge-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .challenge-item i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-top: 0.2rem;
+        }
+
+        .challenge-item h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .architecture-diagram {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .arch-component {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            min-width: 150px;
+            box-shadow: var(--shadow);
+        }
+
+        .arch-component i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .arch-component h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .arch-arrow {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .code-block {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .code-header {
+            background: var(--background-color);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--secondary-color);
+        }
+
+        .code-title {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--surface-color);
+            color: var(--text-secondary);
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .copy-btn:hover {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .case-sidebar {
+            background: var(--surface-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tech-item {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .stats-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--secondary-color);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .case-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--surface-color);
+        }
+
+        .nav-btn {
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .learning-item {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .learning-item h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .enhancement-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .enhancement-list li {
+            background: var(--surface-color);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .insights-section {
+            margin-top: 3rem;
+        }
+
+        .insight-item {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .insight-item h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Clarity API specific styles */
+        .transformation-example {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+        }
+
+        .transform-stage {
+            background: var(--background-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .transform-stage h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .transform-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .transform-arrow i {
+            font-size: 1.5rem;
+        }
+
+        .table-preview table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .table-preview th,
+        .table-preview td {
+            padding: 0.5rem;
+            text-align: left;
+            border: 1px solid var(--secondary-color);
+        }
+
+        .table-preview th {
+            background: var(--surface-color);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .metric-card {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .metric-card.negative {
+            border-left: 4px solid #ef4444;
+        }
+
+        .metric-card.positive {
+            border-left: 4px solid #22c55e;
+        }
+
+        .metric-card.neutral {
+            border-left: 4px solid #6b7280;
+        }
+
+        .metric-card i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric-card.negative i {
+            color: #ef4444;
+        }
+
+        .metric-card.positive i {
+            color: #22c55e;
+        }
+
+        .metric-card.neutral i {
+            color: #6b7280;
+        }
+
+        .metric-card h4 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .metric-insight {
+            background: var(--background-color);
+            padding: 0.8rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .excel-sheets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .sheet-item {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .sheet-item i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .sheet-item h4 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .sheet-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--primary-color);
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .automation-benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            background: var(--surface-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .benefit-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            flex-shrink: 0;
+        }
+
+        .benefit-content h4 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .benefit-content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .transformation-example {
+                padding: 1rem;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .excel-sheets {
+                grid-template-columns: 1fr;
+            }
+
+            .automation-benefits {
+                grid-template-columns: 1fr;
+            }
+
+            .benefit-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .benefit-number {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .case-study-hero h1 {
+                font-size: 2rem;
+            }
+
+            .case-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .architecture-diagram {
+                flex-direction: column;
+            }
+
+            .arch-arrow {
+                transform: rotate(90deg);
+            }
+
+            .case-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .case-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .transformation-example {
+                padding: 1rem;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .excel-sheets {
+                grid-template-columns: 1fr;
+            }
+
+            .automation-benefits {
+                grid-template-columns: 1fr;
+            }
+
+            .benefit-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .benefit-number {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</body>
+</html>

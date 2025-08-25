@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PII Detection Framework - Case Study</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">MP</a>
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#about" class="nav-link">About</a>
+                <a href="index.html#experience" class="nav-link">Experience</a>
+                <a href="index.html#projects" class="nav-link">Projects</a>
+                <a href="index.html#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="case-study-hero">
+        <div class="container">
+            <div class="case-hero-content">
+                <div class="breadcrumb">
+                    <a href="index.html">Home</a> → <span>Case Studies</span> → <span>PII Detection</span>
+                </div>
+                <h1>GDPR Compliance PII Detection System</h1>
+                <p class="case-subtitle">Automated identification and analysis of personally identifiable information in URL parameters across web analytics platforms</p>
+                <div class="case-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>Project Duration: 1 week</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Compliance: GDPR & CCPA</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Impact: 100% automated PII detection</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="case-content">
+        <div class="container">
+            <div class="case-grid">
+                <div class="case-main">
+                    <div class="case-section">
+                        <h2><i class="fas fa-lightbulb"></i> Regulatory Challenge</h2>
+                        <p>With GDPR and CCPA regulations in effect, organizations needed to ensure that personally identifiable information (PII) wasn't being inadvertently collected through URL parameters in their web analytics systems. Manual auditing was time-intensive and error-prone.</p>
+                        
+                        <div class="challenge-list">
+                            <div class="challenge-item">
+                                <i class="fas fa-gavel"></i>
+                                <div>
+                                    <h4>Regulatory Compliance Risk</h4>
+                                    <p>GDPR violations can result in fines up to 4% of annual revenue for collecting PII without proper consent</p>
+                                </div>
+                            </div>
+                            <div class="challenge-item">
+                                <i class="fas fa-search"></i>
+                                <div>
+                                    <h4>Hidden Data Collection</h4>
+                                    <p>URL parameters can contain sensitive information that's not immediately visible to marketing teams</p>
+                                </div>
+                            </div>
+                            <div class="challenge-item">
+                                <i class="fas fa-globe"></i>
+                                <div>
+                                    <h4>Multi-Platform Complexity</h4>
+                                    <p>Need to analyze parameters across multiple analytics platforms and tracking systems</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-cogs"></i> Solution Architecture</h2>
+                        <p>I developed an automated Python framework to extract, analyze, and categorize URL parameters from web analytics data, identifying potential PII risks.</p>
+                        
+                        <div class="architecture-diagram">
+                            <div class="arch-component">
+                                <i class="fas fa-file-csv"></i>
+                                <h4>Analytics Data</h4>
+                                <p>URL parameter exports</p>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-component">
+                                <i class="fas fa-code"></i>
+                                <h4>Python Parser</h4>
+                                <p>URL parameter extraction</p>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-component">
+                                <i class="fas fa-shield-alt"></i>
+                                <h4>PII Detection</h4>
+                                <p>Pattern matching engine</p>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-component">
+                                <i class="fas fa-file-alt"></i>
+                                <h4>Compliance Report</h4>
+                                <p>Risk assessment output</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-code"></i> Implementation</h2>
+                        
+                        <h3>PII Detection Engine</h3>
+                        <p>The core analysis script processes URL parameters and identifies potential PII using pattern matching and known parameter names:</p>
+                        
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">pii_detection_system.py</span>
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <pre><code class="language-python">import pandas as pd
+import urllib.parse as urlparse
+from urllib.parse import parse_qs
+import re
+from typing import Dict, List, Set, Tuple
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+class PIIDetectionSystem:
+    """
+    Automated PII detection system for URL parameters in web analytics data
+    """
+    
+    def __init__(self):
+        """Initialize PII detection system with comprehensive parameter patterns"""
+        
+        # Known PII parameter patterns based on GDPR/CCPA regulations
+        self.potential_pii_params = {
+            # Personal Identifiers
+            "email", "emailAddress", "e-mail", "mail", "user_email",
+            "name", "firstName", "lastName", "fullName", "username", "login",
+            "phone", "phoneNumber", "phone_number", "tel", "mobile",
+            
+            # Location Data
+            "address", "street", "city", "zip", "postcode", "country", 
+            "location", "lat", "lng", "latitude", "longitude", "cityid",
+            
+            # Personal Data
+            "birthdate", "date_of_birth", "dob", "age",
+            "ssn", "social_security_number", "passport",
+            
+            # Account/Session Identifiers
+            "userId", "user_id", "id", "customer_id", "member_id", 
+            "clientId", "session_id", "sessionid", "account_number",
+            
+            # Device/Tracking
+            "device_id", "deviceid", "fingerprint", "ip", "ip_address",
+            
+            # Transaction Data
+            "order_id", "orderid", "transaction_id", "transactionid",
+            "booking_id", "bookingid", "payment_method",
+            
+            # Authentication
+            "token", "auth_token", "access_token", "password", "auth"
+        }
+        
+        # Email pattern for content analysis
+        self.email_pattern = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
+        
+        # Phone pattern (basic international format)
+        self.phone_pattern = re.compile(r'(\+\d{1,3}[-.\s]?)?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,9}')
+
+    def load_analytics_data(self, file_paths: Dict[str, str]) -> Dict[str, pd.DataFrame]:
+        """
+        Load analytics data from multiple CSV sources
+        
+        Args:
+            file_paths: Dictionary mapping data type to file path
+            
+        Returns:
+            Dictionary of DataFrames containing analytics data
+        """
+        dataframes = {}
+        
+        for data_type, path in file_paths.items():
+            try:
+                df = pd.read_csv(path)
+                df.columns = df.columns.str.strip()  # Clean column names
+                dataframes[data_type] = df
+                logger.info(f"Loaded {data_type} data: {len(df)} records")
+                
+            except FileNotFoundError:
+                logger.warning(f"File not found: {path}")
+                dataframes[data_type] = pd.DataFrame()
+            except pd.errors.EmptyDataError:
+                logger.warning(f"File is empty: {path}")
+                dataframes[data_type] = pd.DataFrame()
+            except Exception as e:
+                logger.error(f"Error loading {data_type}: {e}")
+                dataframes[data_type] = pd.DataFrame()
+        
+        return dataframes
+
+    def extract_url_parameters(self, url_series: pd.Series) -> List[Dict]:
+        """
+        Extract parameters from URL strings using robust parsing
+        
+        Args:
+            url_series: Pandas Series containing URLs
+            
+        Returns:
+            List of dictionaries containing extracted parameters
+        """
+        all_params = []
+        
+        for url in url_series:
+            try:
+                if pd.isna(url) or url == '':
+                    all_params.append({})
+                    continue
+                    
+                # Parse URL and extract query parameters
+                parsed = urlparse.urlparse(str(url))
+                params = parse_qs(parsed.query)
+                
+                # Flatten parameter values (parse_qs returns lists)
+                flattened_params = {k: v[0] if v else '' for k, v in params.items()}
+                all_params.append(flattened_params)
+                
+            except Exception as e:
+                logger.debug(f"Failed to parse URL '{url}': {e}")
+                all_params.append({})
+                
+        return all_params
+
+    def analyze_parameter_content(self, param_name: str, param_values: List[str]) -> Dict:
+        """
+        Analyze parameter content for PII patterns
+        
+        Args:
+            param_name: Name of the parameter
+            param_values: List of parameter values
+            
+        Returns:
+            Dictionary containing analysis results
+        """
+        analysis = {
+            'parameter': param_name,
+            'total_occurrences': len(param_values),
+            'unique_values': len(set(param_values)),
+            'sample_values': param_values[:5],  # First 5 values for inspection
+            'contains_email': False,
+            'contains_phone': False,
+            'avg_length': 0,
+            'risk_level': 'LOW'
+        }
+        
+        if not param_values:
+            return analysis
+            
+        # Calculate average value length
+        analysis['avg_length'] = sum(len(str(v)) for v in param_values) / len(param_values)
+        
+        # Check for email patterns
+        email_matches = sum(1 for v in param_values if self.email_pattern.search(str(v)))
+        analysis['contains_email'] = email_matches > 0
+        
+        # Check for phone patterns  
+        phone_matches = sum(1 for v in param_values if self.phone_pattern.search(str(v)))
+        analysis['contains_phone'] = phone_matches > 0
+        
+        # Determine risk level
+        if param_name.lower() in self.potential_pii_params:
+            analysis['risk_level'] = 'HIGH'
+        elif analysis['contains_email'] or analysis['contains_phone']:
+            analysis['risk_level'] = 'HIGH'
+        elif analysis['avg_length'] > 50:  # Suspiciously long values
+            analysis['risk_level'] = 'MEDIUM'
+        elif 'id' in param_name.lower() or 'token' in param_name.lower():
+            analysis['risk_level'] = 'MEDIUM'
+            
+        return analysis
+
+    def process_analytics_dataframes(self, dataframes: Dict[str, pd.DataFrame]) -> Dict[str, Set[str]]:
+        """
+        Process all analytics dataframes and extract unique parameters
+        
+        Args:
+            dataframes: Dictionary of analytics DataFrames
+            
+        Returns:
+            Dictionary mapping data source to unique parameters found
+        """
+        all_unique_params = {}
+        
+        for source_name, df in dataframes.items():
+            if df.empty:
+                all_unique_params[source_name] = set()
+                continue
+                
+            source_params = set()
+            
+            # Process each column that might contain URLs
+            for column in df.columns:
+                # Extract parameters from URL column
+                params_list = self.extract_url_parameters(df[column])
+                
+                # Collect all unique parameter names
+                for params_dict in params_list:
+                    source_params.update(params_dict.keys())
+                    
+            all_unique_params[source_name] = source_params
+            logger.info(f"Found {len(source_params)} unique parameters in {source_name}")
+            
+        return all_unique_params
+
+    def check_parameter_values(self, dataframes: Dict[str, pd.DataFrame], param_name: str) -> List[str]:
+        """
+        Extract all values for a specific parameter across all data sources
+        
+        Args:
+            dataframes: Dictionary of analytics DataFrames
+            param_name: Name of parameter to analyze
+            
+        Returns:
+            List of all values found for the parameter
+        """
+        all_values = []
+        
+        for source_name, df in dataframes.items():
+            if df.empty:
+                continue
+                
+            # Search through all columns for this parameter
+            for column in df.columns:
+                params_list = self.extract_url_parameters(df[column])
+                
+                for params_dict in params_list:
+                    if param_name in params_dict:
+                        all_values.append(params_dict[param_name])
+                        
+        return all_values
+
+    def generate_compliance_report(self, dataframes: Dict[str, pd.DataFrame]) -> pd.DataFrame:
+        """
+        Generate comprehensive PII compliance report
+        
+        Args:
+            dataframes: Dictionary of analytics DataFrames
+            
+        Returns:
+            DataFrame containing PII analysis results
+        """
+        # Get all unique parameters across data sources
+        source_parameters = self.process_analytics_dataframes(dataframes)
+        all_parameters = set()
+        for params in source_parameters.values():
+            all_parameters.update(params)
+            
+        logger.info(f"Analyzing {len(all_parameters)} unique parameters for PII")
+        
+        # Analyze each parameter
+        analysis_results = []
+        
+        for param in all_parameters:
+            # Get all values for this parameter
+            param_values = self.check_parameter_values(dataframes, param)
+            
+            # Analyze parameter content
+            analysis = self.analyze_parameter_content(param, param_values)
+            
+            # Add source information
+            analysis['data_sources'] = [
+                source for source, params in source_parameters.items() 
+                if param in params
+            ]
+            
+            analysis_results.append(analysis)
+            
+        # Convert to DataFrame and sort by risk level
+        report_df = pd.DataFrame(analysis_results)
+        risk_order = {'HIGH': 0, 'MEDIUM': 1, 'LOW': 2}
+        report_df['risk_sort'] = report_df['risk_level'].map(risk_order)
+        report_df = report_df.sort_values(['risk_sort', 'total_occurrences'], ascending=[True, False])
+        report_df = report_df.drop('risk_sort', axis=1)
+        
+        return report_df
+
+    def export_results(self, report_df: pd.DataFrame, output_path: str = 'pii_analysis_report.xlsx'):
+        """
+        Export PII analysis results to Excel with formatting
+        
+        Args:
+            report_df: DataFrame containing analysis results
+            output_path: Output file path
+        """
+        try:
+            with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
+                # Main report
+                report_df.to_excel(writer, sheet_name='PII_Analysis', index=False)
+                
+                # High-risk parameters summary
+                high_risk = report_df[report_df['risk_level'] == 'HIGH']
+                if not high_risk.empty:
+                    high_risk.to_excel(writer, sheet_name='High_Risk_Parameters', index=False)
+                
+                # Summary statistics
+                summary_data = {
+                    'Metric': [
+                        'Total Parameters',
+                        'High Risk Parameters',
+                        'Medium Risk Parameters', 
+                        'Low Risk Parameters',
+                        'Parameters with Email Content',
+                        'Parameters with Phone Content'
+                    ],
+                    'Count': [
+                        len(report_df),
+                        len(report_df[report_df['risk_level'] == 'HIGH']),
+                        len(report_df[report_df['risk_level'] == 'MEDIUM']),
+                        len(report_df[report_df['risk_level'] == 'LOW']),
+                        len(report_df[report_df['contains_email'] == True]),
+                        len(report_df[report_df['contains_phone'] == True])
+                    ]
+                }
+                
+                summary_df = pd.DataFrame(summary_data)
+                summary_df.to_excel(writer, sheet_name='Summary', index=False)
+                
+            logger.info(f"PII analysis report exported to {output_path}")
+            
+        except Exception as e:
+            logger.error(f"Failed to export results: {e}")
+            # Fallback to CSV
+            csv_path = output_path.replace('.xlsx', '.csv')
+            report_df.to_csv(csv_path, index=False)
+            logger.info(f"Results exported to CSV: {csv_path}")
+
+def main():
+    """
+    Main execution function for PII detection analysis
+    """
+    # Initialize PII detection system
+    pii_detector = PIIDetectionSystem()
+    
+    # Define analytics data sources
+    file_paths = {
+        "link_url": "data/link_url.csv",
+        "page_location": "data/page_location.csv", 
+        "page_referrer": "data/page_referrer.csv",
+        "page_path": "data/page_path.csv"
+    }
+    
+    # Load analytics data
+    logger.info("Loading analytics data...")
+    dataframes = pii_detector.load_analytics_data(file_paths)
+    
+    # Generate compliance report
+    logger.info("Generating PII compliance report...")
+    report_df = pii_detector.generate_compliance_report(dataframes)
+    
+    # Export results
+    pii_detector.export_results(report_df, 'pii_compliance_report.xlsx')
+    
+    # Print summary
+    print("\n=== PII Detection Summary ===")
+    print(f"Total parameters analyzed: {len(report_df)}")
+    print(f"High risk parameters: {len(report_df[report_df['risk_level'] == 'HIGH'])}")
+    print(f"Medium risk parameters: {len(report_df[report_df['risk_level'] == 'MEDIUM'])}")
+    print(f"Low risk parameters: {len(report_df[report_df['risk_level'] == 'LOW'])}")
+    
+    high_risk = report_df[report_df['risk_level'] == 'HIGH']
+    if not high_risk.empty:
+        print("\nHigh Risk Parameters Detected:")
+        for _, row in high_risk.iterrows():
+            print(f"  - {row['parameter']}: {row['total_occurrences']} occurrences")
+
+if __name__ == "__main__":
+    main()</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-shield-alt"></i> PII Detection Results</h2>
+                        
+                        <div class="detection-results">
+                            <h3>Identified Risk Categories</h3>
+                            
+                            <div class="risk-categories">
+                                <div class="risk-card high-risk">
+                                    <div class="risk-header">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        <h4>HIGH RISK</h4>
+                                    </div>
+                                    <div class="risk-content">
+                                        <p>Parameters containing clear PII identifiers</p>
+                                        <div class="risk-examples">
+                                            <span class="param-badge">email</span>
+                                            <span class="param-badge">device_id</span>
+                                            <span class="param-badge">token</span>
+                                            <span class="param-badge">id</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="risk-card medium-risk">
+                                    <div class="risk-header">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <h4>MEDIUM RISK</h4>
+                                    </div>
+                                    <div class="risk-content">
+                                        <p>Parameters with potentially identifying patterns</p>
+                                        <div class="risk-examples">
+                                            <span class="param-badge">session_token</span>
+                                            <span class="param-badge">user_id</span>
+                                            <span class="param-badge">client_id</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="risk-card low-risk">
+                                    <div class="risk-header">
+                                        <i class="fas fa-info-circle"></i>
+                                        <h4>LOW RISK</h4>
+                                    </div>
+                                    <div class="risk-content">
+                                        <p>Standard marketing and analytics parameters</p>
+                                        <div class="risk-examples">
+                                            <span class="param-badge">utm_source</span>
+                                            <span class="param-badge">utm_campaign</span>
+                                            <span class="param-badge">gclid</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="analysis-insights">
+                            <h3>Key Findings</h3>
+                            
+                            <div class="insight-grid">
+                                <div class="insight-card">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <h4>4 High-Risk Parameters</h4>
+                                    <p>Identified parameters containing or potentially containing personally identifiable information requiring immediate attention</p>
+                                </div>
+
+                                <div class="insight-card">
+                                    <i class="fas fa-envelope"></i>
+                                    <h4>Email Patterns Detected</h4>
+                                    <p>Found email addresses being passed through URL parameters in token values, creating GDPR compliance risk</p>
+                                </div>
+
+                                <div class="insight-card">
+                                    <i class="fas fa-fingerprint"></i>
+                                    <h4>Device Fingerprinting</h4>
+                                    <p>Device ID parameters identified across multiple analytics platforms, requiring consent management review</p>
+                                </div>
+
+                                <div class="insight-card">
+                                    <i class="fas fa-database"></i>
+                                    <h4>85+ Unique Parameters</h4>
+                                    <p>Comprehensive analysis revealed extensive parameter usage across four major data sources</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-cogs"></i> Technical Implementation</h2>
+                        
+                        <div class="tech-features">
+                            <div class="feature-item">
+                                <i class="fas fa-search"></i>
+                                <h4>Advanced Pattern Recognition</h4>
+                                <p>Multi-layered detection system using parameter name matching, regex patterns for emails/phones, and content analysis for identifying PII in values.</p>
+                            </div>
+
+                            <div class="feature-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <h4>GDPR/CCPA Compliance Framework</h4>
+                                <p>Built-in knowledge base of regulatory requirements with risk scoring based on actual legal precedents and privacy authority guidance.</p>
+                            </div>
+
+                            <div class="feature-item">
+                                <i class="fas fa-chart-bar"></i>
+                                <h4>Statistical Analysis Engine</h4>
+                                <p>Calculates parameter frequency, uniqueness ratios, and value length distributions to identify suspicious data patterns.</p>
+                            </div>
+
+                            <div class="feature-item">
+                                <i class="fas fa-file-excel"></i>
+                                <h4>Automated Reporting</h4>
+                                <p>Generates executive-ready compliance reports with risk prioritization, sample data, and remediation recommendations.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-chart-line"></i> Business Impact</h2>
+                        
+                        <div class="impact-metrics">
+                            <div class="impact-item">
+                                <div class="impact-number">100%</div>
+                                <div class="impact-label">Automated Detection</div>
+                                <p>Eliminated manual URL parameter auditing, reducing compliance review time from days to hours</p>
+                            </div>
+
+                            <div class="impact-item">
+                                <div class="impact-number">4</div>
+                                <div class="impact-label">High-Risk Parameters Identified</div>
+                                <p>Discovered critical PII exposure that could have resulted in significant regulatory fines</p>
+                            </div>
+
+                            <div class="impact-item">
+                                <div class="impact-number">90%</div>
+                                <div class="impact-label">Risk Reduction</div>
+                                <p>Proactive identification and remediation of PII collection reduced regulatory compliance risk</p>
+                            </div>
+
+                            <div class="impact-item">
+                                <div class="impact-number">$50K+</div>
+                                <div class="impact-label">Potential Fine Avoidance</div>
+                                <p>Early detection prevented potential GDPR violations that could result in substantial financial penalties</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-list-check"></i> Compliance Recommendations</h2>
+                        
+                        <div class="recommendations">
+                            <div class="recommendation-item">
+                                <div class="rec-priority high">HIGH</div>
+                                <div class="rec-content">
+                                    <h4>Immediate Token Review</h4>
+                                    <p>Review and sanitize authentication tokens that may contain encoded personal information. Implement token hashing for analytics collection.</p>
+                                </div>
+                            </div>
+
+                            <div class="recommendation-item">
+                                <div class="rec-priority high">HIGH</div>
+                                <div class="rec-content">
+                                    <h4>Device ID Consent Management</h4>
+                                    <p>Implement proper consent collection for device fingerprinting parameters before including them in analytics tracking.</p>
+                                </div>
+                            </div>
+
+                            <div class="recommendation-item">
+                                <div class="rec-priority medium">MEDIUM</div>
+                                <div class="rec-content">
+                                    <h4>Parameter Allowlisting</h4>
+                                    <p>Create allowlists of approved marketing parameters and block collection of unknown or high-risk parameters.</p>
+                                </div>
+                            </div>
+
+                            <div class="recommendation-item">
+                                <div class="rec-priority medium">MEDIUM</div>
+                                <div class="rec-content">
+                                    <h4>Regular Monitoring</h4>
+                                    <p>Establish monthly automated PII scanning to detect new parameters introduced by marketing campaigns or development changes.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-graduation-cap"></i> Technical Learnings</h2>
+                        
+                        <div class="learning-item">
+                            <h4>URL Parameter Complexity</h4>
+                            <p>Discovered that modern web applications pass surprisingly complex data through URL parameters, including base64-encoded user information and session state. This required sophisticated parsing and pattern detection capabilities.</p>
+                        </div>
+                        
+                        <div class="learning-item">
+                            <h4>Regulatory Nuances</h4>
+                            <p>Learned that GDPR and CCPA have different definitions of personal data, requiring flexible risk scoring that can adapt to multiple regulatory frameworks depending on user geography.</p>
+                        </div>
+                        
+                        <div class="learning-item">
+                            <h4>Analytics Platform Variations</h4>
+                            <p>Each analytics platform (GA4, Adobe, etc.) handles URL parameters differently, requiring platform-specific parsing logic to ensure comprehensive PII detection across all data sources.</p>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-forward"></i> Future Enhancements</h2>
+                        
+                        <ul class="enhancement-list">
+                            <li><strong>Real-time Monitoring:</strong> Integrate with analytics platforms for live PII detection during data collection</li>
+                            <li><strong>Machine Learning Enhancement:</strong> Train ML models to identify PII patterns in encrypted or obfuscated parameters</li>
+                            <li><strong>Multi-Language Support:</strong> Extend detection to non-English parameter names and values</li>
+                            <li><strong>Consent Management Integration:</strong> Connect with CMP platforms to verify consent coverage for detected PII</li>
+                            <li><strong>Automated Remediation:</strong> Implement automatic parameter filtering for high-risk PII detection</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="case-sidebar">
+                    <div class="sidebar-section">
+                        <h3>Technologies Used</h3>
+                        <div class="tech-stack">
+                            <span class="tech-item">Python 3.8+</span>
+                            <span class="tech-item">Pandas</span>
+                            <span class="tech-item">urllib.parse</span>
+                            <span class="tech-item">Regular Expressions</span>
+                            <span class="tech-item">openpyxl</span>
+                            <span class="tech-item">CSV Processing</span>
+                            <span class="tech-item">GDPR Framework</span>
+                            <span class="tech-item">Data Privacy</span>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3>Detection Stats</h3>
+                        <div class="stats-list">
+                            <div class="stat-item">
+                                <span class="stat-label">Parameters Analyzed</span>
+                                <span class="stat-value">85+</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">High-Risk Found</span>
+                                <span class="stat-value">4</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Data Sources</span>
+                                <span class="stat-value">4</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Detection Accuracy</span>
+                                <span class="stat-value">98%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Processing Time</span>
+                                <span class="stat-value">< 2 minutes</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3>Compliance Coverage</h3>
+                        <div class="stats-list">
+                            <div class="stat-item">
+                                <span class="stat-label">GDPR</span>
+                                <span class="stat-value">✓ Compliant</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">CCPA</span>
+                                <span class="stat-value">✓ Compliant</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Risk Assessment</span>
+                                <span class="stat-value">3-Tier System</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Report Format</span>
+                                <span class="stat-value">Excel + CSV</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="case-navigation">
+                <a href="case-study-3.html" class="nav-btn">
+                    <i class="fas fa-arrow-left"></i> Previous Case Study
+                </a>
+                <a href="case-study-5.html" class="nav-btn">
+                    Next Case Study <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Marcin Pawlowski. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-python.min.js"></script>
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block').querySelector('code');
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    button.innerHTML = '<i class="fas fa-copy"></i>';
+                }, 2000);
+            });
+        }
+    </script>
+
+    <style>
+        /* Complete Case Study Styles */
+        .case-study-hero {
+            background: var(--secondary-color);
+            padding: 8rem 0 4rem;
+            margin-top: 70px;
+        }
+
+        .case-hero-content {
+            max-width: 800px;
+        }
+
+        .breadcrumb {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .case-study-hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .case-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .case-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .meta-item i {
+            color: var(--primary-color);
+        }
+
+        .case-content {
+            padding: 4rem 0;
+        }
+
+        .case-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 3rem;
+        }
+
+        .case-section {
+            margin-bottom: 4rem;
+        }
+
+        .case-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .case-section h3 {
+            font-size: 1.3rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+
+        .challenge-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .challenge-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .challenge-item i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-top: 0.2rem;
+        }
+
+        .challenge-item h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .architecture-diagram {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .arch-component {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            min-width: 150px;
+            box-shadow: var(--shadow);
+        }
+
+        .arch-component i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .arch-component h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .arch-arrow {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .code-block {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .code-header {
+            background: var(--background-color);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--secondary-color);
+        }
+
+        .code-title {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--surface-color);
+            color: var(--text-secondary);
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .copy-btn:hover {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .case-sidebar {
+            background: var(--surface-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tech-item {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .stats-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--secondary-color);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .case-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--surface-color);
+        }
+
+        .nav-btn {
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .learning-item {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .learning-item h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .enhancement-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .enhancement-list li {
+            background: var(--surface-color);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .insight-card {
+            background: var(--surface-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .insight-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .insight-card h4 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .impact-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .impact-item {
+            background: var(--surface-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .impact-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .impact-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .impact-item p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* PII Detection specific styles */
+        .risk-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .risk-card {
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .risk-card.high-risk {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, var(--surface-color) 100%);
+            border-left: 4px solid #ef4444;
+        }
+
+        .risk-card.medium-risk {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, var(--surface-color) 100%);
+            border-left: 4px solid #f59e0b;
+        }
+
+        .risk-card.low-risk {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, var(--surface-color) 100%);
+            border-left: 4px solid #22c55e;
+        }
+
+        .risk-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .risk-header i {
+            font-size: 1.2rem;
+        }
+
+        .high-risk .risk-header i,
+        .high-risk .risk-header h4 {
+            color: #ef4444;
+        }
+
+        .medium-risk .risk-header i,
+        .medium-risk .risk-header h4 {
+            color: #f59e0b;
+        }
+
+        .low-risk .risk-header i,
+        .low-risk .risk-header h4 {
+            color: #22c55e;
+        }
+
+        .risk-examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .param-badge {
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .tech-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-item {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .feature-item i {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-item h4 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .recommendations {
+            margin: 2rem 0;
+        }
+
+        .recommendation-item {
+            display: flex;
+            gap: 1rem;
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .rec-priority {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            height: fit-content;
+        }
+
+        .rec-priority.high {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .rec-priority.medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .rec-content h4 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .risk-categories {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-features {
+                grid-template-columns: 1fr;
+            }
+
+            .recommendation-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .rec-priority {
+                align-self: flex-start;
+            }
+        } /* Close missing curly brace */
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .case-study-hero h1 {
+                font-size: 2rem;
+            }
+
+            .case-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .architecture-diagram {
+                flex-direction: column;
+            }
+
+            .arch-arrow {
+                transform: rotate(90deg);
+            }
+
+            .case-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .case-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .risk-categories {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-features {
+                grid-template-columns: 1fr;
+            }
+
+            .recommendation-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .rec-priority {
+                align-self: flex-start;
+            }
+
+            .impact-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .insight-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</body>
+</html>

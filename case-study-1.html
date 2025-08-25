@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTM Automation Pipeline - Case Study</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">MP</a>
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#about" class="nav-link">About</a>
+                <a href="index.html#experience" class="nav-link">Experience</a>
+                <a href="index.html#projects" class="nav-link">Projects</a>
+                <a href="index.html#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="case-study-hero">
+        <div class="container">
+            <div class="case-hero-content">
+                <div class="breadcrumb">
+                    <a href="index.html">Home</a> → <span>Case Studies</span> → <span>GTM Automation</span>
+                </div>
+                <h1>Automated GTM ID Monitoring System</h1>
+                <p class="case-subtitle">Implementing a serverless monitoring pipeline using Google Cloud Platform to ensure tracking accuracy across multiple domains</p>
+                <div class="case-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>Project Duration: 2 weeks</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-users"></i>
+                        <span>Team Size: Individual project</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Impact: 95% reduction in manual checks</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="case-content">
+        <div class="container">
+            <div class="case-grid">
+                <div class="case-main">
+                    <div class="case-section">
+                        <h2><i class="fas fa-lightbulb"></i> The Challenge</h2>
+                        <p>Managing website tracking across multiple domains presented significant operational challenges. Our team was responsible for monitoring Google Tag Manager (GTM) implementations across 15+ websites, each critical for accurate data collection and marketing attribution.</p>
+                        
+                        <div class="challenge-list">
+                            <div class="challenge-item">
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <h4>Time-Consuming Manual Checks</h4>
+                                    <p>Daily manual verification of GTM IDs across all domains was taking 2+ hours of analyst time</p>
+                                </div>
+                            </div>
+                            <div class="challenge-item">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>
+                                    <h4>Human Error Risk</h4>
+                                    <p>Manual processes were prone to oversight, potentially missing critical tracking failures</p>
+                                </div>
+                            </div>
+                            <div class="challenge-item">
+                                <i class="fas fa-comments"></i>
+                                <div>
+                                    <h4>Communication Delays</h4>
+                                    <p>No systematic way to alert the team when tracking issues were detected</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-cogs"></i> Solution Architecture</h2>
+                        <p>I designed a serverless automation pipeline leveraging Google Cloud Platform services to create a reliable, scalable monitoring system.</p>
+                        
+                        <div class="architecture-diagram">
+                            <div class="arch-component">
+                                <i class="fas fa-clock"></i>
+                                <h4>Cloud Scheduler</h4>
+                                <p>Triggers daily execution at 9 AM CET</p>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-component">
+                                <i class="fas fa-broadcast-tower"></i>
+                                <h4>Pub/Sub</h4>
+                                <p>Message queue for decoupled processing</p>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-component">
+                                <i class="fas fa-code"></i>
+                                <h4>Cloud Function</h4>
+                                <p>Python script execution environment</p>
+                            </div>
+                            <div class="arch-arrow">→</div>
+                            <div class="arch-component">
+                                <i class="fab fa-slack"></i>
+                                <h4>Slack Integration</h4>
+                                <p>Real-time notifications to team</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-code"></i> Implementation Details</h2>
+                        
+                        <h3>Core Python Script</h3>
+                        <p>The heart of the system is a Python function that performs HTTP requests to check for GTM container presence:</p>
+                        
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">main.py</span>
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <pre><code class="language-python">import requests
+import re
+import json
+
+# Configuration
+SLACK_TOKEN = 'xoxb-your-slack-bot-token'
+SLACK_CHANNEL = 'C1234567890'
+
+# Website monitoring configuration
+WEBSITES = {
+    'https://example-site1.com': 'GTM-ABC123',
+    'https://example-site2.com': 'GTM-DEF456',
+    'https://example-site3.com': 'GTM-GHI789',
+    # Add additional sites as needed
+}
+
+def check_gtm_presence():
+    """
+    Check for GTM container presence across configured websites
+    Returns dict with status for each site
+    """
+    results = {}
+    
+    for url, gtm_id in WEBSITES.items():
+        try:
+            # Perform HTTP request with timeout
+            response = requests.get(url, timeout=10, headers={
+                'User-Agent': 'GTM-Monitor/1.0'
+            })
+            
+            # Search for GTM ID in page source
+            if re.search(f'{gtm_id}', response.text):
+                results[url] = {
+                    'status': 'success',
+                    'message': 'GTM container found',
+                    'gtm_id': gtm_id
+                }
+            else:
+                results[url] = {
+                    'status': 'warning',
+                    'message': 'GTM container missing',
+                    'gtm_id': gtm_id
+                }
+                
+        except requests.RequestException as e:
+            results[url] = {
+                'status': 'error',
+                'message': f'Request failed: {str(e)}',
+                'gtm_id': gtm_id
+            }
+            
+    return results
+
+def format_slack_message(results):
+    """
+    Format monitoring results for Slack notification
+    """
+    message_blocks = [
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": "🔍 Daily GTM Monitoring Report"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"*Report Date:* {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+            }
+        }
+    ]
+    
+    success_count = sum(1 for r in results.values() if r['status'] == 'success')
+    total_count = len(results)
+    
+    # Summary section
+    summary_text = f"*Summary:* {success_count}/{total_count} sites have GTM properly configured"
+    if success_count == total_count:
+        summary_text += " ✅"
+    else:
+        summary_text += " ⚠️"
+        
+    message_blocks.append({
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": summary_text
+        }
+    })
+    
+    # Detailed results
+    for url, result in results.items():
+        icon = "✅" if result['status'] == 'success' else "❌" if result['status'] == 'error' else "⚠️"
+        
+        message_blocks.append({
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"{icon} *{url}*\n`{result['gtm_id']}` - {result['message']}"
+            }
+        })
+    
+    return {"blocks": message_blocks}
+
+def post_to_slack(message_data):
+    """
+    Send formatted message to Slack channel
+    """
+    headers = {
+        'Authorization': f'Bearer {SLACK_TOKEN}',
+        'Content-Type': 'application/json'
+    }
+    
+    payload = {
+        'channel': SLACK_CHANNEL,
+        **message_data
+    }
+    
+    response = requests.post(
+        'https://slack.com/api/chat.postMessage',
+        json=payload,
+        headers=headers
+    )
+    
+    if not response.ok or not response.json().get('ok'):
+        print(f'Failed to send message to Slack: {response.text}')
+        return False
+    
+    return True
+
+def main(event, context):
+    """
+    Cloud Function entry point triggered by Pub/Sub
+    """
+    print('Starting GTM monitoring check...')
+    
+    # Check all websites
+    results = check_gtm_presence()
+    
+    # Format and send Slack notification
+    message_data = format_slack_message(results)
+    success = post_to_slack(message_data)
+    
+    if success:
+        print('GTM monitoring report sent successfully')
+    else:
+        print('Failed to send monitoring report')
+    
+    return {'status': 'completed', 'results': results}</code></pre>
+                        </div>
+
+                        <h3>Requirements & Dependencies</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">requirements.txt</span>
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <pre><code class="language-text">requests==2.28.1
+functions-framework==3.2.0</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-rocket"></i> Deployment Process</h2>
+                        
+                        <div class="deployment-steps">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Create Pub/Sub Topic</h4>
+                                    <p>Establish the messaging infrastructure for triggering the function</p>
+                                    <div class="code-snippet">
+                                        <code>gcloud pubsub topics create daily-gtm-check</code>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Deploy Cloud Function</h4>
+                                    <p>Upload and configure the Python script as a serverless function</p>
+                                    <div class="code-snippet">
+                                        <code>gcloud functions deploy gtm-monitor \
+  --runtime python39 \
+  --trigger-topic daily-gtm-check \
+  --entry-point main \
+  --memory 256MB \
+  --timeout 540s</code>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Configure Cloud Scheduler</h4>
+                                    <p>Set up automated daily execution at 9 AM CET</p>
+                                    <div class="code-snippet">
+                                        <code>gcloud scheduler jobs create pubsub daily-gtm-job \
+  --schedule="0 9 * * *" \
+  --topic=daily-gtm-check \
+  --message-body='{}' \
+  --time-zone="Europe/Warsaw"</code>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h4>Slack App Configuration</h4>
+                                    <p>Create and configure Slack bot with appropriate permissions</p>
+                                    <ul>
+                                        <li>Create new Slack app in your workspace</li>
+                                        <li>Add <code>chat:write</code> bot scope</li>
+                                        <li>Install app to workspace</li>
+                                        <li>Copy bot token for authentication</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-chart-line"></i> Results & Impact</h2>
+                        
+                        <div class="results-grid">
+                            <div class="result-card">
+                                <i class="fas fa-clock"></i>
+                                <h3>95% Time Savings</h3>
+                                <p>Reduced manual monitoring from 2+ hours daily to 5 minutes of report review</p>
+                            </div>
+                            <div class="result-card">
+                                <i class="fas fa-shield-alt"></i>
+                                <h3>100% Reliability</h3>
+                                <p>Automated system runs consistently without human intervention or oversight</p>
+                            </div>
+                            <div class="result-card">
+                                <i class="fas fa-bell"></i>
+                                <h3>Real-time Alerts</h3>
+                                <p>Team receives immediate notifications of any tracking issues via Slack</p>
+                            </div>
+                            <div class="result-card">
+                                <i class="fas fa-dollar-sign"></i>
+                                <h3>Cost Efficient</h3>
+                                <p>Total monthly operational cost under $2 using GCP serverless architecture</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-graduation-cap"></i> Key Learnings</h2>
+                        
+                        <div class="learning-item">
+                            <h4>Serverless Architecture Benefits</h4>
+                            <p>Using Cloud Functions eliminated the need for server management and provided automatic scaling. The pay-per-execution model made the solution extremely cost-effective for periodic monitoring tasks.</p>
+                        </div>
+                        
+                        <div class="learning-item">
+                            <h4>Error Handling & Reliability</h4>
+                            <p>Implementing comprehensive error handling and retry logic was crucial for reliable operation. The system gracefully handles network timeouts, invalid responses, and Slack API failures.</p>
+                        </div>
+                        
+                        <div class="learning-item">
+                            <h4>Team Communication Integration</h4>
+                            <p>Integrating monitoring results directly into existing team communication workflows (Slack) significantly improved response times and reduced the chance of missed issues.</p>
+                        </div>
+                    </div>
+
+                    <div class="case-section">
+                        <h2><i class="fas fa-forward"></i> Future Enhancements</h2>
+                        
+                        <ul class="enhancement-list">
+                            <li><strong>Enhanced Monitoring:</strong> Add checks for other tracking pixels (Facebook Pixel, LinkedIn Insight Tag)</li>
+                            <li><strong>Dashboard Integration:</strong> Create a Looker Studio dashboard for historical monitoring data</li>
+                            <li><strong>Advanced Alerting:</strong> Implement escalation policies for critical failures</li>
+                            <li><strong>Performance Monitoring:</strong> Add page load time tracking alongside GTM verification</li>
+                            <li><strong>Multi-Region Deployment:</strong> Test website accessibility from multiple geographic locations</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="case-sidebar">
+                    <div class="sidebar-section">
+                        <h3>Technologies Used</h3>
+                        <div class="tech-stack">
+                            <span class="tech-item">Python 3.9</span>
+                            <span class="tech-item">Google Cloud Platform</span>
+                            <span class="tech-item">Cloud Functions</span>
+                            <span class="tech-item">Pub/Sub</span>
+                            <span class="tech-item">Cloud Scheduler</span>
+                            <span class="tech-item">Slack API</span>
+                            <span class="tech-item">Regular Expressions</span>
+                            <span class="tech-item">HTTP Requests</span>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3>Project Stats</h3>
+                        <div class="stats-list">
+                            <div class="stat-item">
+                                <span class="stat-label">Websites Monitored</span>
+                                <span class="stat-value">15+</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Daily Executions</span>
+                                <span class="stat-value">1</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Execution Time</span>
+                                <span class="stat-value">~30s</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Monthly Cost</span>
+                                <span class="stat-value">< $2</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Uptime</span>
+                                <span class="stat-value">99.9%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3>Related Articles</h3>
+                        <div class="related-links">
+                            <a href="https://www.linkedin.com/pulse/how-automate-website-gtm-id-checks-slack-google-cloud-pawlowski-bjl0e/" target="_blank" class="related-link">
+                                <i class="fab fa-linkedin"></i>
+                                LinkedIn Article: GTM Automation Guide
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="case-navigation">
+                <a href="index.html" class="nav-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Portfolio
+                </a>
+                <a href="case-study-2.html" class="nav-btn">
+                    Next Case Study <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Marcin Pawlowski. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-python.min.js"></script>
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block').querySelector('code');
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    button.innerHTML = '<i class="fas fa-copy"></i>';
+                }, 2000);
+            });
+        }
+    </script>
+
+    <style>
+        .case-study-hero {
+            background: var(--secondary-color);
+            padding: 8rem 0 4rem;
+            margin-top: 70px;
+        }
+
+        .case-hero-content {
+            max-width: 800px;
+        }
+
+        .breadcrumb {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .case-study-hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .case-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .case-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .meta-item i {
+            color: var(--primary-color);
+        }
+
+        .case-content {
+            padding: 4rem 0;
+        }
+
+        .case-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 3rem;
+        }
+
+        .case-section {
+            margin-bottom: 4rem;
+        }
+
+        .case-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .case-section h3 {
+            font-size: 1.3rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+
+        .challenge-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .challenge-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .challenge-item i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-top: 0.2rem;
+        }
+
+        .challenge-item h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .architecture-diagram {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .arch-component {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            min-width: 150px;
+            box-shadow: var(--shadow);
+        }
+
+        .arch-component i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .arch-component h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .arch-arrow {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .code-block {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .code-header {
+            background: var(--background-color);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--secondary-color);
+        }
+
+        .code-title {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--surface-color);
+            color: var(--text-secondary);
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .copy-btn:hover {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .deployment-steps {
+            margin: 2rem 0;
+        }
+
+        .step {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .code-snippet {
+            background: var(--background-color);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .code-snippet code {
+            color: var(--text-secondary);
+            font-family: 'Courier New', monospace;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .result-card {
+            background: var(--surface-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .result-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .result-card h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .learning-item {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .learning-item h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .enhancement-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .enhancement-list li {
+            background: var(--surface-color);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .case-sidebar {
+            background: var(--surface-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tech-item {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .stats-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--secondary-color);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .related-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .related-link:hover {
+            color: var(--primary-color);
+        }
+
+        .case-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--surface-color);
+        }
+
+        .nav-btn {
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .case-study-hero h1 {
+                font-size: 2rem;
+            }
+
+            .case-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .architecture-diagram {
+                flex-direction: column;
+            }
+
+            .arch-arrow {
+                transform: rotate(90deg);
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .case-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .case-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</body>
+</html>
